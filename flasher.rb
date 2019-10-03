@@ -126,7 +126,7 @@ if ARGV.join(' ').strip.empty? then
 else
     sequence = Morse.sequence ARGV.join(' ') #get input string from ARGV and combine substrings
 
-    oldState = IO.read(@light) #read current state before flashing
+    old_state = IO.read(@light) #read current state before flashing
 
     sequence.each do |mode| 
         puts "#{mode[2]} #{mode[0]} for #{mode[1]} seconds" #print brightness values and state duration
@@ -134,5 +134,5 @@ else
         sleep mode[1] #pause for duration
     end
 
-    IO.write(@light, oldState) #reset light to previous state
+    IO.write(@light, old_state) #reset light to previous state
 end
