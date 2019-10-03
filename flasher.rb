@@ -6,7 +6,6 @@
 
 #/sys/class/leds/tpacpi::thinklight/brightness
 
-
 @loop = false
 
 @log = false
