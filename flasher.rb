@@ -1,10 +1,6 @@
 #!/usr/bin/env ruby
 
-@light = '/sys/class/leds/input3::capslock/brightness' #the path to the corresponding brightness file in /sys/class/, change to the light you want to blink
-
-#/sys/class/leds/input3::capslock/brightness
-
-#/sys/class/leds/tpacpi::thinklight/brightness
+@light = '/sys/class/leds/tpacpi::thinklight/brightness' #the path to the corresponding brightness file in /sys/class/, change to the light you want to blink
 
 @loop = false
 
