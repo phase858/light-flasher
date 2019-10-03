@@ -2,6 +2,15 @@
 
 @light = '/sys/class/leds/input3::capslock/brightness' #the path to the corresponding brightness file in /sys/class/, change to the light you want to blink
 
+#/sys/class/leds/input3::capslock/brightness
+
+#/sys/class/leds/tpacpi::thinklight/brightness
+
+
+@loop = false
+
+@log = false
+
 class Morse
     @encoder = {
         #underscores for inter-element gaps
@@ -101,6 +110,10 @@ class Morse
         end
         
         trimmed = translated.slice(1, translated.length-3) #trim off unnecesary trailing gap characters
+        
+        if @loop then
+            trimmed << '^'
+        end
 
         return trimmed #return string
     end
@@ -120,19 +133,54 @@ class Morse
     end
 end
 
+def quit
+    begin
+        while c = STDIN.read_nonblock(1) do
+            if c == 'q' then
+                @loop = false
+            end
+        end
+    rescue
+    end
+end
+
 #check if a message was actualy enterd as the arg
 if ARGV.join(' ').strip.empty? then
     puts 'no text to blink entered' #error condition
 else
-    sequence = Morse.sequence ARGV.join(' ') #get input string from ARGV and combine substrings
+    if @loop then
+        sequence = Morse.sequence ARGV.join(' ') #get input string from ARGV and combine substrings
 
-    old_state = IO.read(@light) #read current state before flashing
+        old_state = IO.read(@light) #read current state before flashing
 
-    sequence.each do |mode| 
-        puts "#{mode[2]} #{mode[0]} for #{mode[1]} seconds" #print brightness values and state duration
-        IO.write(@light, mode[0]) #write state to light
-        sleep mode[1] #pause for duration
+        while @loop do
+            sequence.each do |mode|
+                if @log then
+                    puts "#{mode[2]} #{mode[0]} for #{mode[1]} seconds" #print brightness values and state duration
+                end
+                
+                IO.write(@light, mode[0]) #write state to light
+
+                quit
+
+                sleep mode[1] #pause for duration
+            end
+        end
+
+        IO.write(@light, old_state) #reset light to previous state
+    else
+        sequence = Morse.sequence ARGV.join(' ') #get input string from ARGV and combine substrings
+
+        old_state = IO.read(@light) #read current state before flashing
+
+        sequence.each do |mode|
+            if @log then
+                puts "#{mode[2]} #{mode[0]} for #{mode[1]} seconds" #print brightness values and state duration
+            end
+            IO.write(@light, mode[0]) #write state to light
+            sleep mode[1] #pause for duration
+        end
+
+        IO.write(@light, old_state) #reset light to previous state
     end
-
-    IO.write(@light, old_state) #reset light to previous state
 end
