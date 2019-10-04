@@ -1,5 +1,5 @@
 # light-flasher
-A hacky and semi shitty probably ruby script to flash arbitary lights in morse code. (only works on linux)
+A ruby script to flash arbitary lights in morse code. (only works on linux)
 ## setup and usage
 - download ``flasher.rb`` and ``sudo chomod +x flasher.rb``
 - find the ``brightness`` file of the light you want to flash in ``/sys/class/``
