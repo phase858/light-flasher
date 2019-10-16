@@ -152,7 +152,7 @@ if ARGV.join(' ').strip.empty? then
     puts 'no text to blink entered' #error condition
 else
     if @loop then
-        sequence = Morse.sequence ARGV.join(' ') #get input string from ARGV and combine substrings
+        sequence = Morse.sequence ARGV.join(' ').downcase! #get input string from ARGV and combine substrings
 
         old_state = IO.read(@light) #read current state before flashing
 
