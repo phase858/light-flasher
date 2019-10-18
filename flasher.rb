@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-@light = '/sys/class/leds/tpacpi::thinklight/brightness' #the path to the corresponding brightness file in /sys/class/, change to the light you want to blink
+
 
 @loop = false
 
@@ -146,6 +146,33 @@ def quit
     rescue
     end
 end
+
+#the path to the corresponding brightness file in /sys/class/, change to the light you want to blink
+leds = `ls -d /sys/class/leds/*`.split
+choice = -1
+while choice < 1 || choice > leds.length do
+	puts " #\t\tLED"
+	puts "-"*50
+	leds.each_with_index { |led, index|
+			index = index + 1
+				puts "[#{index}] #{led}"
+	}
+	puts "\n"
+	print "Enter LED # to access (q to exit): "
+
+	choice = $stdin.gets.chomp
+
+	if choice == 'q' then
+		exit(1)
+	end
+
+	choice = choice.to_i
+end
+
+choice = choice - 1
+@light = leds[choice]
+@light = @light + "/brightness"
+@light = File.expand_path(@light)
 
 #check if a message was actualy enterd as the arg
 if ARGV.join(' ').strip.empty? then
